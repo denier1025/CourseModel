@@ -31,6 +31,7 @@ import java.util.Properties;
 @EnableJpaRepositories
 @PropertySource("classpath:hibernate.properties")
 public class AppConfig {
+
     @Resource
     private Environment env;
 

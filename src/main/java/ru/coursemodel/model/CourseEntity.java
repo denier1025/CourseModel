@@ -1,9 +1,12 @@
 package ru.coursemodel.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -11,6 +14,12 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "course")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class CourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,14 +28,8 @@ public class CourseEntity {
     private int number;
     private float price;
 
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private StudentEntity studentEntity;
-
-    @JsonManagedReference
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<StudentEntity> students;
+    private Set<StudentEntity> students = new HashSet<>();
 
     @JsonBackReference
     @ManyToOne
@@ -35,86 +38,10 @@ public class CourseEntity {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<ProfessorEntity> professors;
+    private Set<ProfessorEntity> professors = new HashSet<>();
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "pass_course_id")
     private PassCourseEntity passCourseEntity;
-
-    public CourseEntity() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public StudentEntity getStudentEntity() {
-        return studentEntity;
-    }
-
-    public void setStudentEntity(StudentEntity studentEntity) {
-        this.studentEntity = studentEntity;
-    }
-
-    public Set<StudentEntity> getStudents() {
-        return students;
-    }
-
-    public void setStudents(Set<StudentEntity> students) {
-        this.students = students;
-    }
-
-    public ProfessorEntity getProfessorEntity() {
-        return professorEntity;
-    }
-
-    public void setProfessorEntity(ProfessorEntity professorEntity) {
-        this.professorEntity = professorEntity;
-    }
-
-    public Set<ProfessorEntity> getProfessors() {
-        return professors;
-    }
-
-    public void setProfessors(Set<ProfessorEntity> professors) {
-        this.professors = professors;
-    }
-
-    public PassCourseEntity getPassCourseEntity() {
-        return passCourseEntity;
-    }
-
-    public void setPassCourseEntity(PassCourseEntity passCourseEntity) {
-        this.passCourseEntity = passCourseEntity;
-    }
-
 }

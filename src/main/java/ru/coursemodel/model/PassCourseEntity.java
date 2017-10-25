@@ -1,7 +1,6 @@
 package ru.coursemodel.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -10,40 +9,22 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "pass_course")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class PassCourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer mark;
 
-    @JsonManagedReference
     @OneToOne(mappedBy = "passCourseEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private CourseEntity courseEntity;
 
-    public PassCourseEntity() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getMark() {
-        return mark;
-    }
-
-    public void setMark(Integer mark) {
-        this.mark = mark;
-    }
-
-    public CourseEntity getCourseEntity() {
-        return courseEntity;
-    }
-
-    public void setCourseEntity(CourseEntity courseEntity) {
-        this.courseEntity = courseEntity;
-    }
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private StudentEntity studentEntity;
 }
