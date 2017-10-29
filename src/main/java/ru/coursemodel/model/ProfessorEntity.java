@@ -13,12 +13,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "professor")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 public class ProfessorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +23,7 @@ public class ProfessorEntity {
     private String phone;
     private Float payment;
 
+    @Setter(AccessLevel.NONE)
     @JsonManagedReference
     @OneToMany(mappedBy = "professorEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CourseEntity> courses = new HashSet<>();
@@ -36,4 +32,8 @@ public class ProfessorEntity {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private CourseEntity courseEntity;
+
+    public void setCourses(CourseEntity course) {
+        this.courses.add(course);
+    }
 }

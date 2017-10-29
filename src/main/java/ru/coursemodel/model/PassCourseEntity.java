@@ -1,5 +1,6 @@
 package ru.coursemodel.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,12 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "pass_course")
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 public class PassCourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +20,7 @@ public class PassCourseEntity {
     @OneToOne(mappedBy = "passCourseEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private CourseEntity courseEntity;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "student_id")
     private StudentEntity studentEntity;
