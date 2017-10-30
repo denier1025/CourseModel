@@ -2,16 +2,17 @@ package ru.coursemodel.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.coursemodel.model.StudentEntity;
+import ru.coursemodel.model.Student;
 import ru.coursemodel.repository.StudentRepository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @Service
 public class StudentService {
@@ -19,42 +20,45 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public StudentEntity findById(Long id) {
-        StudentEntity studentEntity = studentRepository.findOne(id);
-        if(studentEntity == null) {
+    public Student findById(Long id) {
+        Student student = studentRepository.findOne(id);
+        if(student == null) {
             throw new EntityNotFoundException();
         }
-        return studentEntity;
+        return student;
     }
 
     @Transactional
-    public List<StudentEntity> findAllStudents() {
-        return studentRepository.findAll();
+    public List<Student> findAllStudents() {
+        List<Student> list = new ArrayList<>();
+        Iterable<Student> student = studentRepository.findAll();
+        student.forEach(list::add);
+        return list;
     }
 
     @Transactional(rollbackFor = EntityExistsException.class)
-    public StudentEntity createStudent(StudentEntity studentEntity) {
-        if (studentEntity.getId() != null && studentRepository.findOne(studentEntity.getId()) != null) {
+    public Student createStudent(Student student) {
+        if (student.getId() != null && studentRepository.findOne(student.getId()) != null) {
             throw new EntityExistsException();
         }
-        return studentRepository.save(studentEntity);
+        return studentRepository.save(student);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public StudentEntity updateStudent(StudentEntity studentEntity) {
-        StudentEntity updatedStudent = studentRepository.findOne(studentEntity.getId());
+    public Student updateStudent(Student student) {
+        Student updatedStudent = studentRepository.findOne(student.getId());
         if (updatedStudent == null) {
             throw new EntityNotFoundException();
         }
-        return studentRepository.save(studentEntity);
+        return studentRepository.save(student);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
     public void deleteStudent(Long id) {
-        StudentEntity studentEntity = studentRepository.findOne(id);
-        if(studentEntity == null) {
+        Student student = studentRepository.findOne(id);
+        if(student == null) {
             throw new EntityNotFoundException();
         }
-        studentRepository.delete(studentEntity.getId());
+        studentRepository.delete(student.getId());
     }
 }

@@ -2,16 +2,17 @@ package ru.coursemodel.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.coursemodel.model.ProfessorEntity;
+import ru.coursemodel.model.Professor;
 import ru.coursemodel.repository.ProfessorRepository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @Service
 public class ProfessorService {
@@ -19,42 +20,45 @@ public class ProfessorService {
     private ProfessorRepository professorRepository;
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public ProfessorEntity findById(Long id) {
-        ProfessorEntity professorEntity = professorRepository.findOne(id);
-        if(professorEntity == null) {
+    public Professor findById(Long id) {
+        Professor professor = professorRepository.findOne(id);
+        if(professor == null) {
             throw new EntityNotFoundException();
         }
-        return professorEntity;
+        return professor;
     }
 
     @Transactional
-    public List<ProfessorEntity> findAllProfessors() {
-        return professorRepository.findAll();
+    public List<Professor> findAllProfessors() {
+        List<Professor> list = new ArrayList<>();
+        Iterable<Professor> professors = professorRepository.findAll();
+        professors.forEach(list::add);
+        return list;
     }
 
     @Transactional(rollbackFor = EntityExistsException.class)
-    public ProfessorEntity createProfessor(ProfessorEntity professorEntity) {
-        if (professorEntity.getId() != null && professorRepository.findOne(professorEntity.getId()) != null) {
+    public Professor createProfessor(Professor professor) {
+        if (professor.getId() != null && professorRepository.findOne(professor.getId()) != null) {
             throw new EntityExistsException();
         }
-        return professorRepository.save(professorEntity);
+        return professorRepository.save(professor);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public ProfessorEntity updateProfessor(ProfessorEntity professorEntity) {
-        ProfessorEntity updatedProfessor = professorRepository.findOne(professorEntity.getId());
+    public Professor updateProfessor(Professor professor) {
+        Professor updatedProfessor = professorRepository.findOne(professor.getId());
         if (updatedProfessor == null) {
             throw new EntityNotFoundException();
         }
-        return professorRepository.save(professorEntity);
+        return professorRepository.save(professor);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
     public void deleteProfessor(Long id) {
-        ProfessorEntity professorEntity = professorRepository.findOne(id);
-        if(professorEntity == null) {
+        Professor professor = professorRepository.findOne(id);
+        if(professor == null) {
             throw new EntityNotFoundException();
         }
-        professorRepository.delete(professorEntity.getId());
+        professorRepository.delete(professor.getId());
     }
 }

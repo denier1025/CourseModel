@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.coursemodel.model.PassCourseEntity;
+import ru.coursemodel.model.PassCourse;
 import ru.coursemodel.service.PassCourseService;
 
 import javax.persistence.EntityExistsException;
@@ -13,7 +13,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @RestController
 @RequestMapping("/passcourses")
@@ -22,27 +22,27 @@ public class PassCourseController {
     private PassCourseService passCourseService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<PassCourseEntity> getPassCourse(@PathVariable("id") long id) {
-        PassCourseEntity passCourseEntity;
+    public ResponseEntity<PassCourse> getPassCourse(@PathVariable("id") long id) {
+        PassCourse passCourse;
         try {
-            passCourseEntity = passCourseService.findById(id);
+            passCourse = passCourseService.findById(id);
         } catch(EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(passCourseEntity);
+        return ResponseEntity.ok(passCourse);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<PassCourseEntity>> passCourseList() {
-        List<PassCourseEntity> passCourseEntities = passCourseService.findAllPassCourses();
-        return ResponseEntity.ok(passCourseEntities);
+    public ResponseEntity<List<PassCourse>> passCourseList() {
+        List<PassCourse> passCourses = passCourseService.findAllPassCourses();
+        return ResponseEntity.ok(passCourses);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<PassCourseEntity> createPassCourse(@RequestBody PassCourseEntity passCourseEntity, UriComponentsBuilder ucBuilder) {
-        PassCourseEntity passCourse;
+    public ResponseEntity<PassCourse> createPassCourse(@RequestBody PassCourse passCourseData, UriComponentsBuilder ucBuilder) {
+        PassCourse passCourse;
         try {
-            passCourse = passCourseService.createPassCourse(passCourseEntity);
+            passCourse = passCourseService.createPassCourse(passCourseData);
         } catch (EntityExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -53,19 +53,19 @@ public class PassCourseController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<PassCourseEntity> editPassCourse(
+    public ResponseEntity<PassCourse> editPassCourse(
             @PathVariable("id") long id,
-            @RequestBody PassCourseEntity passCourseEntity) {
-        passCourseEntity.setId(id);
+            @RequestBody PassCourse passCourse) {
+        passCourse.setId(id);
         try {
-            return ResponseEntity.ok(passCourseService.updatePassCourse(passCourseEntity));
+            return ResponseEntity.ok(passCourseService.updatePassCourse(passCourse));
         } catch(EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<PassCourseEntity> deletePassCourse(@PathVariable("id") long id) {
+    public ResponseEntity<PassCourse> deletePassCourse(@PathVariable("id") long id) {
         try {
             passCourseService.deletePassCourse(id);
         } catch(EntityNotFoundException e) {

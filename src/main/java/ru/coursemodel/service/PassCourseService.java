@@ -2,16 +2,17 @@ package ru.coursemodel.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.coursemodel.model.PassCourseEntity;
+import ru.coursemodel.model.PassCourse;
 import ru.coursemodel.repository.PassCourseRepository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @Service
 public class PassCourseService {
@@ -19,42 +20,45 @@ public class PassCourseService {
     private PassCourseRepository passCourseRepository;
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public PassCourseEntity findById(Long id) {
-        PassCourseEntity passCourseEntity = passCourseRepository.findOne(id);
-        if(passCourseEntity == null) {
+    public PassCourse findById(Long id) {
+        PassCourse passCourse = passCourseRepository.findOne(id);
+        if(passCourse == null) {
             throw new EntityNotFoundException();
         }
-        return passCourseEntity;
+        return passCourse;
     }
 
     @Transactional
-    public List<PassCourseEntity> findAllPassCourses() {
-        return passCourseRepository.findAll();
+    public List<PassCourse> findAllPassCourses() {
+        List<PassCourse> list = new ArrayList<>();
+        Iterable<PassCourse> passCourses = passCourseRepository.findAll();
+        passCourses.forEach(list::add);
+        return list;
     }
 
     @Transactional(rollbackFor = EntityExistsException.class)
-    public PassCourseEntity createPassCourse(PassCourseEntity passCourseEntity) {
-        if (passCourseEntity.getId() != null && passCourseRepository.findOne(passCourseEntity.getId()) != null) {
+    public PassCourse createPassCourse(PassCourse passCourse) {
+        if (passCourse.getId() != null && passCourseRepository.findOne(passCourse.getId()) != null) {
             throw new EntityExistsException();
         }
-        return passCourseRepository.save(passCourseEntity);
+        return passCourseRepository.save(passCourse);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public PassCourseEntity updatePassCourse(PassCourseEntity passCourseEntity) {
-        PassCourseEntity updatedPassCourse = passCourseRepository.findOne(passCourseEntity.getId());
+    public PassCourse updatePassCourse(PassCourse passCourse) {
+        PassCourse updatedPassCourse = passCourseRepository.findOne(passCourse.getId());
         if (updatedPassCourse == null) {
             throw new EntityNotFoundException();
         }
-        return passCourseRepository.save(passCourseEntity);
+        return passCourseRepository.save(passCourse);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
     public void deletePassCourse(Long id) {
-        PassCourseEntity passCourseEntity = passCourseRepository.findOne(id);
-        if(passCourseEntity == null) {
+        PassCourse passCourse = passCourseRepository.findOne(id);
+        if(passCourse == null) {
             throw new EntityNotFoundException();
         }
-        passCourseRepository.delete(passCourseEntity.getId());
+        passCourseRepository.delete(passCourse.getId());
     }
 }

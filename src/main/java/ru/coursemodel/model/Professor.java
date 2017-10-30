@@ -2,19 +2,21 @@ package ru.coursemodel.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @Entity
 @Table(name = "professor")
 @Data
-public class ProfessorEntity {
+public class Professor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,15 +27,15 @@ public class ProfessorEntity {
 
     @Setter(AccessLevel.NONE)
     @JsonManagedReference
-    @OneToMany(mappedBy = "professorEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<CourseEntity> courses = new HashSet<>();
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Course> courses = new HashSet<>();
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "course_id")
-    private CourseEntity courseEntity;
+    private Course course;
 
-    public void setCourses(CourseEntity course) {
+    public void setCourses(Course course) {
         this.courses.add(course);
     }
 }

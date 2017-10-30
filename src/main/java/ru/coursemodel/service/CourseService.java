@@ -2,16 +2,17 @@ package ru.coursemodel.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.coursemodel.model.CourseEntity;
+import ru.coursemodel.model.Course;
 import ru.coursemodel.repository.CourseRepository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @Service
 public class CourseService {
@@ -19,42 +20,45 @@ public class CourseService {
     private CourseRepository courseRepository;
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public CourseEntity findById(Long id) {
-        CourseEntity courseEntity = courseRepository.findOne(id);
-        if(courseEntity == null) {
+    public Course findById(Long id) {
+        Course course = courseRepository.findOne(id);
+        if(course == null) {
             throw new EntityNotFoundException();
         }
-        return courseEntity;
+        return course;
     }
 
     @Transactional
-    public List<CourseEntity> findAllCourses() {
-        return courseRepository.findAll();
+    public List<Course> findAllCourses() {
+        List<Course> list = new ArrayList<>();
+        Iterable<Course> courses = courseRepository.findAll();
+        courses.forEach(list::add);
+        return list;
     }
 
     @Transactional(rollbackFor = EntityExistsException.class)
-    public CourseEntity createCourse(CourseEntity courseEntity) {
-        if (courseEntity.getId() != null && courseRepository.findOne(courseEntity.getId()) != null) {
+    public Course createCourse(Course course) {
+        if (course.getId() != null && courseRepository.findOne(course.getId()) != null) {
             throw new EntityExistsException();
         }
-        return courseRepository.save(courseEntity);
+        return courseRepository.save(course);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
-    public CourseEntity updateCourse(CourseEntity courseEntity) {
-        CourseEntity updatedCourse = courseRepository.findOne(courseEntity.getId());
+    public Course updateCourse(Course course) {
+        Course updatedCourse = courseRepository.findOne(course.getId());
         if (updatedCourse == null) {
             throw new EntityNotFoundException();
         }
-        return courseRepository.save(courseEntity);
+        return courseRepository.save(course);
     }
 
     @Transactional(rollbackFor = EntityNotFoundException.class)
     public void deleteCourse(Long id) {
-        CourseEntity courseEntity = courseRepository.findOne(id);
-        if(courseEntity == null) {
+        Course course = courseRepository.findOne(id);
+        if(course == null) {
             throw new EntityNotFoundException();
         }
-        courseRepository.delete(courseEntity.getId());
+        courseRepository.delete(course.getId());
     }
 }

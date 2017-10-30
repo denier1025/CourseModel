@@ -2,11 +2,10 @@ package ru.coursemodel.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.coursemodel.model.StudentEntity;
+import ru.coursemodel.model.Student;
 import ru.coursemodel.service.StudentService;
 
 import javax.persistence.EntityExistsException;
@@ -14,7 +13,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @RestController
 @RequestMapping("/students")
@@ -23,27 +22,27 @@ public class StudentController {
     private StudentService studentService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<StudentEntity> getStudent(@PathVariable("id") long id) {
-        StudentEntity studentEntity;
+    public ResponseEntity<Student> getStudent(@PathVariable("id") long id) {
+        Student student;
         try {
-            studentEntity = studentService.findById(id);
+            student = studentService.findById(id);
         } catch(EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(studentEntity);
+        return ResponseEntity.ok(student);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<StudentEntity>> studentList() {
-        List<StudentEntity> studentEntities = studentService.findAllStudents();
-        return ResponseEntity.ok(studentEntities);
+    public ResponseEntity<List<Student>> studentList() {
+        List<Student> students = studentService.findAllStudents();
+        return ResponseEntity.ok(students);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<StudentEntity> createStudent(@RequestBody StudentEntity studentEntity, UriComponentsBuilder ucBuilder) {
-        StudentEntity student;
+    public ResponseEntity<Student> createStudent(@RequestBody Student studentData, UriComponentsBuilder ucBuilder) {
+        Student student;
         try {
-            student = studentService.createStudent(studentEntity);
+            student = studentService.createStudent(studentData);
         } catch (EntityExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -54,19 +53,19 @@ public class StudentController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<StudentEntity> editStudent(
+    public ResponseEntity<Student> editStudent(
             @PathVariable("id") long id,
-            @RequestBody StudentEntity studentEntity) {
-        studentEntity.setId(id);
+            @RequestBody Student student) {
+        student.setId(id);
         try {
-            return ResponseEntity.ok(studentService.updateStudent(studentEntity));
+            return ResponseEntity.ok(studentService.updateStudent(student));
         } catch(EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<StudentEntity> deleteStudent(@PathVariable("id") long id) {
+    public ResponseEntity<Student> deleteStudent(@PathVariable("id") long id) {
         try {
             studentService.deleteStudent(id);
         } catch(EntityNotFoundException e) {

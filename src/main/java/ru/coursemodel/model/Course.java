@@ -12,12 +12,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @Entity
 @Table(name = "course")
 @Data
-public class CourseEntity {
+public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,29 +26,29 @@ public class CourseEntity {
     private float price;
 
     @Setter(AccessLevel.NONE)
-    @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<StudentEntity> students = new HashSet<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Student> students = new HashSet<>();
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "professor_id")
-    private ProfessorEntity professorEntity;
+    private Professor professor;
 
     @Setter(AccessLevel.NONE)
     @JsonManagedReference
-    @OneToMany(mappedBy = "courseEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<ProfessorEntity> professors = new HashSet<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Professor> professors = new HashSet<>();
 
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "pass_course_id")
-    private PassCourseEntity passCourseEntity;
+    private PassCourse passCourse;
 
-    public void setStudents(StudentEntity student) {
+    public void setStudents(Student student) {
         this.students.add(student);
     }
 
-    public void setProfessors(ProfessorEntity professor) {
+    public void setProfessors(Professor professor) {
         this.professors.add(professor);
     }
 }

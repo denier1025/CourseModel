@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import ru.coursemodel.model.ProfessorEntity;
+import ru.coursemodel.model.Professor;
 import ru.coursemodel.service.ProfessorService;
 
 import javax.persistence.EntityExistsException;
@@ -13,7 +13,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
- * Created by Alexey on 22.10.2017.
+ * Created by Alexey on 30.10.2017.
  */
 @RestController
 @RequestMapping("/professors")
@@ -22,27 +22,27 @@ public class ProfessorController {
     private ProfessorService professorService;
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<ProfessorEntity> getProfessor(@PathVariable("id") long id) {
-        ProfessorEntity professorEntity;
+    public ResponseEntity<Professor> getProfessor(@PathVariable("id") long id) {
+        Professor professor;
         try {
-            professorEntity = professorService.findById(id);
+            professor = professorService.findById(id);
         } catch(EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(professorEntity);
+        return ResponseEntity.ok(professor);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<ProfessorEntity>> professorList() {
-        List<ProfessorEntity> professorEntities = professorService.findAllProfessors();
-        return ResponseEntity.ok(professorEntities);
+    public ResponseEntity<List<Professor>> professorList() {
+        List<Professor> professors = professorService.findAllProfessors();
+        return ResponseEntity.ok(professors);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<ProfessorEntity> createProfessor(@RequestBody ProfessorEntity professorEntity, UriComponentsBuilder ucBuilder) {
-        ProfessorEntity professor;
+    public ResponseEntity<Professor> createProfessor(@RequestBody Professor professorData, UriComponentsBuilder ucBuilder) {
+        Professor professor;
         try {
-            professor = professorService.createProfessor(professorEntity);
+            professor = professorService.createProfessor(professorData);
         } catch (EntityExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -53,19 +53,19 @@ public class ProfessorController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public ResponseEntity<ProfessorEntity> editProfessor(
+    public ResponseEntity<Professor> editProfessor(
             @PathVariable("id") long id,
-            @RequestBody ProfessorEntity professorEntity) {
-        professorEntity.setId(id);
+            @RequestBody Professor professor) {
+        professor.setId(id);
         try {
-            return ResponseEntity.ok(professorService.updateProfessor(professorEntity));
+            return ResponseEntity.ok(professorService.updateProfessor(professor));
         } catch(EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<ProfessorEntity> deleteProfessor(@PathVariable("id") long id) {
+    public ResponseEntity<Professor> deleteProfessor(@PathVariable("id") long id) {
         try {
             professorService.deleteProfessor(id);
         } catch(EntityNotFoundException e) {
