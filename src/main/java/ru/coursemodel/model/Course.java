@@ -44,11 +44,11 @@ public class Course {
     @JoinColumn(name = "pass_course_id")
     private PassCourse passCourse;
 
-    public void setStudents(Student student) {
-        this.students.add(student);
+    public void setStudents(Set<Student> students) {
+        students.forEach(student -> this.students.add(student));
     }
 
-    public void setProfessors(Professor professor) {
-        this.professors.add(professor);
+    public void setProfessors(Set<Professor> professors) {
+        professors.forEach(professor -> this.professors.add(professor));
     }
 }

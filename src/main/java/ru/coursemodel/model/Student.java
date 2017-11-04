@@ -37,7 +37,7 @@ public class Student {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    public void setPassCourses(PassCourse passCourse) {
-        this.passCourses.add(passCourse);
+    public void setPassCourses(Set<PassCourse> passCourses) {
+        passCourses.forEach(passCourse -> this.passCourses.add(passCourse));
     }
 }

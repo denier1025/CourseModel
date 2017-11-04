@@ -35,7 +35,7 @@ public class Professor {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    public void setCourses(Course course) {
-        this.courses.add(course);
+    public void setCourses(Set<Course> courses) {
+        courses.forEach(course -> this.courses.add(course));
     }
 }
