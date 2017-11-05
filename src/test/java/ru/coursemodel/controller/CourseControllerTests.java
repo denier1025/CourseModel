@@ -13,7 +13,6 @@ import ru.coursemodel.model.Course;
 import ru.coursemodel.repository.CourseRepository;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.Assert.assertEquals;
@@ -25,9 +24,9 @@ import static org.junit.Assert.assertTrue;
 public class CourseControllerTests extends CoursemodelApplicationTests {
 
     private static final long UNKNOWN_ID = Long.MAX_VALUE;
-
-    private static final String API_ROOT
-            = "http://localhost:8081/courses/";
+    private static final int PORT = 8081;
+    private static final String BASE_URL
+            = "http://localhost:" + PORT + "/courses/";
 
     @Autowired
     private CourseRepository courseRepository;
@@ -38,8 +37,6 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
     public void setUp() {
         savedCourse = new Course();
         savedCourse.setName(randomAlphabetic(10));
-        savedCourse.setNumber(new Random().nextInt());
-        savedCourse.setPrice(new Random().nextFloat());
         savedCourse = courseRepository.save(savedCourse);
     }
 
@@ -51,7 +48,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
 
     @Test
     public void whenGetAllCourses_thenOK() {
-        Response response = RestAssured.get(API_ROOT);
+        Response response = RestAssured.get(BASE_URL);
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         assertTrue(response.as(List.class).size() == 1);
@@ -59,7 +56,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
 
     @Test
     public void whenGetOneCourse_thenOK() {
-        Response response = RestAssured.get(API_ROOT + savedCourse.getId());
+        Response response = RestAssured.get(BASE_URL + savedCourse.getId());
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         assertEquals(savedCourse.getName(), response.jsonPath().get("name"));
@@ -67,7 +64,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
 
     @Test
     public void whenGetOneCourse_thenNotFound() {
-        Response response = RestAssured.get(API_ROOT + UNKNOWN_ID);
+        Response response = RestAssured.get(BASE_URL + UNKNOWN_ID);
 
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
     }
@@ -80,7 +77,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
         Response response = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(newCourse)
-                .post(API_ROOT);
+                .post(BASE_URL);
 
         assertEquals(HttpStatus.CREATED.value(), response.getStatusCode());
         assertEquals(newCourse.getName(), response.jsonPath().get("name"));
@@ -94,7 +91,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
         Response response = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(newCourse)
-                .post(API_ROOT);
+                .post(BASE_URL);
 
         assertEquals(HttpStatus.CONFLICT.value(), response.getStatusCode());
     }
@@ -107,7 +104,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
         Response response = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(newCourse)
-                .put(API_ROOT + savedCourse.getId());
+                .put(BASE_URL + savedCourse.getId());
 
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         assertEquals(newCourse.getName(), response.jsonPath().get("name"));
@@ -120,7 +117,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
         Response response = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(newCourse)
-                .put(API_ROOT + UNKNOWN_ID);
+                .put(BASE_URL + UNKNOWN_ID);
 
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
     }
@@ -128,7 +125,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
     @Test
     public void whenDeleteCourse_thenNoContent() {
         Response response = RestAssured
-                .delete(API_ROOT + savedCourse.getId());
+                .delete(BASE_URL + savedCourse.getId());
 
         assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatusCode());
         assertTrue(!courseRepository.findAll().iterator().hasNext());
@@ -137,7 +134,7 @@ public class CourseControllerTests extends CoursemodelApplicationTests {
     @Test
     public void whenDeleteCourse_thenNotFound() {
         Response response = RestAssured
-                .delete(API_ROOT + UNKNOWN_ID);
+                .delete(BASE_URL + UNKNOWN_ID);
 
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
     }
